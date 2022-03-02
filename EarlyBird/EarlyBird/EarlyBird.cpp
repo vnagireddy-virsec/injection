@@ -4,6 +4,8 @@
 
 int main(int argc, char* argv[])
 {
+	printf("[*] [%s] PID: [%d]\r\n", argv[0], GetCurrentProcessId());
+
 	if (argc != 2)
 	{
 		printf("Usage: earlybird.exe [binary]\n");
@@ -97,7 +99,14 @@ int main(int argc, char* argv[])
 	}
 	/* Resume Thread */
 	printf("[*] Resuming thread....\r\n");
-	ResumeThread(pProcessInfo->hThread);
-	return 0;
+	DWORD tpsc = ResumeThread(pProcessInfo->hThread);
+	printf("[*] ResumeThread(...): [%ld]\r\n", tpsc);
+
+	WaitForSingleObject(pProcessInfo->hProcess, -1);
+	DWORD exitcode;
+	bool rv = GetExitCodeProcess(pProcessInfo->hProcess, &exitcode);
+	printf("[*] exitcode [%d]", exitcode);
+
+	return exitcode;
 }
 
